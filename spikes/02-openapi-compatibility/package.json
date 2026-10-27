@@ -1,0 +1,17 @@
+{
+  "name": "@hitman/spike-openapi",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "vitest run --root . --config vitest.config.ts",
+    "evaluate": "tsx src/evaluate.ts"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "13.1.0",
+    "@readme/openapi-parser": "10.0.0",
+    "@redocly/openapi-core": "2.71.1",
+    "@scalar/openapi-parser": "0.29.16",
+    "yaml": "2.9.1"
+  }
+}

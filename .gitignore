@@ -1,0 +1,41 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+coverage/
+*.tsbuildinfo
+
+# Local environment and generated artifacts
+.env
+.env.*
+!.env.example
+!.env.staging.example
+.dev/
+.toolchain/
+apps/web/.vite/
+spikes/**/tmp/
+spikes/**/out/
+
+# Test and tool artifacts
+*.log
+.vitest/
+playwright-report/
+test-results/
+
+# Runner artifacts
+runner-go/bin/
+runner-go/dist/
+spikes/02-networking/bin/
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# Local certificates
+*.pem
+*.key
+!spikes/**/fixtures/*.pem

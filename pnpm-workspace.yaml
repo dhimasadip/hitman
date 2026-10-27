@@ -1,0 +1,14 @@
+packages:
+  - apps/*
+  - packages/*
+  - spikes/*
+
+minimumReleaseAgeExclude:
+  - "@tanstack/query-core@5.105.0"
+  - "@tanstack/react-query@5.105.0"
+  - "@redocly/openapi-core@2.71.1"
+  - "@fastify/cookie@11.1.5"
+
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true

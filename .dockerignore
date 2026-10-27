@@ -1,0 +1,17 @@
+# Build context hygiene for local/container builds.
+.git
+.gitlab
+.dev
+.toolchain
+node_modules
+**/node_modules
+**/dist
+coverage
+*.log
+.env
+.env.*
+!.env.example
+docs
+spikes/02-networking
+spikes/**/results
+runner-go/bin

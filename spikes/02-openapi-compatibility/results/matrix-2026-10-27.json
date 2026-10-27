@@ -1,0 +1,229 @@
+[
+  {
+    "fixture": "openapi-3.0.yaml",
+    "parser": "@scalar/openapi-parser",
+    "version": "3.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 142.36917099999994,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.0.yaml",
+    "parser": "@redocly/openapi-core",
+    "version": "3.0.3",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 20.72648700000002,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.0.yaml",
+    "parser": "@readme/openapi-parser",
+    "version": "3.0.3",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 96.34526899999992,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.0.yaml",
+    "parser": "@apidevtools/swagger-parser",
+    "version": "3.0.3",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 75.45157999999992,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.1.yaml",
+    "parser": "@scalar/openapi-parser",
+    "version": "3.1",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 3,
+    "durationMs": 119.49960800000008,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.1.yaml",
+    "parser": "@redocly/openapi-core",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 3,
+    "durationMs": 8.693769999999859,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.1.yaml",
+    "parser": "@readme/openapi-parser",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 3,
+    "durationMs": 71.12866800000006,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.1.yaml",
+    "parser": "@apidevtools/swagger-parser",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 3,
+    "durationMs": 55.23552100000006,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.2.yaml",
+    "parser": "@scalar/openapi-parser",
+    "version": "3.2",
+    "valid": false,
+    "errorCount": 2,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 79.15224399999988,
+    "errors": [
+      "/paths/~1api~1v1~1bas/additionalOperations: not must NOT be valid",
+      "/paths/~1api~1v1~1bas/additionalOperations: propertyNames property name must be valid"
+    ]
+  },
+  {
+    "fixture": "openapi-3.2.yaml",
+    "parser": "@redocly/openapi-core",
+    "version": "3.2.1",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 2,
+    "durationMs": 7.258110999999872,
+    "errors": []
+  },
+  {
+    "fixture": "openapi-3.2.yaml",
+    "parser": "@readme/openapi-parser",
+    "version": "3.2.1",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 0,
+    "durationMs": 2.7639520000000175,
+    "errors": ["OpenAPI 3.2 is currently unsupported."]
+  },
+  {
+    "fixture": "openapi-3.2.yaml",
+    "parser": "@apidevtools/swagger-parser",
+    "version": "3.2.1",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 0,
+    "durationMs": 2.5330780000001596,
+    "errors": [
+      "Unsupported OpenAPI version: 3.2.1. Swagger Parser only supports versions 3.1.0, 3.1.1, 3.1.2, 3.0.0, 3.0.1, 3.0.2, 3.0.3, 3.0.4"
+    ]
+  },
+  {
+    "fixture": "invalid.yaml",
+    "parser": "@scalar/openapi-parser",
+    "version": "3.1",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 1,
+    "durationMs": 1.385392000000138,
+    "errors": ["/info: must have required property 'title'"]
+  },
+  {
+    "fixture": "invalid.yaml",
+    "parser": "@redocly/openapi-core",
+    "version": "3.1.0",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 1,
+    "durationMs": 4.332719999999881,
+    "errors": ["The field `title` must be present on this level."]
+  },
+  {
+    "fixture": "invalid.yaml",
+    "parser": "@readme/openapi-parser",
+    "version": "3.1.0",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 1,
+    "durationMs": 70.5654199999999,
+    "errors": [
+      "REQUIRED must have required property 'title'\n\n  1 | {\n  2 |   \"openapi\": \"3.1.0\",\n> 3 |   \"info\": {\n    |           ^ title is missing here!\n  4 |     \"version\": \"1.0.0\"\n  5 |   },\n  6 |   \"paths\": {"
+    ]
+  },
+  {
+    "fixture": "invalid.yaml",
+    "parser": "@apidevtools/swagger-parser",
+    "version": "3.1.0",
+    "valid": false,
+    "errorCount": 1,
+    "warningCount": 0,
+    "operationCount": 0,
+    "durationMs": 52.41370400000005,
+    "errors": ["Swagger schema validation failed.\n  #/info must have required property 'title'\n"]
+  },
+  {
+    "fixture": "large-500-paths.json",
+    "parser": "@scalar/openapi-parser",
+    "version": "3.1",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 500,
+    "durationMs": 44.3261,
+    "errors": []
+  },
+  {
+    "fixture": "large-500-paths.json",
+    "parser": "@redocly/openapi-core",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 500,
+    "durationMs": 278.4323099999999,
+    "errors": []
+  },
+  {
+    "fixture": "large-500-paths.json",
+    "parser": "@readme/openapi-parser",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 500,
+    "durationMs": 256.72575299999994,
+    "errors": []
+  },
+  {
+    "fixture": "large-500-paths.json",
+    "parser": "@apidevtools/swagger-parser",
+    "version": "3.1.0",
+    "valid": true,
+    "errorCount": 0,
+    "warningCount": 0,
+    "operationCount": 500,
+    "durationMs": 261.75144,
+    "errors": []
+  }
+]

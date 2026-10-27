@@ -1,0 +1,42 @@
+{
+  "name": "hitman",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Hitman — Internal API Hub",
+  "type": "module",
+  "packageManager": "pnpm@12.14.0",
+  "engines": {
+    "node": ">=24.0.0 <25",
+    "pnpm": ">=12.0.0 <13"
+  },
+  "scripts": {
+    "build": "tsc -b --pretty false && pnpm --filter @hitman/web build",
+    "dev": "pnpm run build:packages && pnpm --parallel --filter @hitman/server --filter @hitman/worker dev",
+    "dev:web": "pnpm run build:packages && pnpm --filter @hitman/web dev",
+    "build:packages": "tsc -b packages/contracts packages/config packages/database --pretty false",
+    "lint": "biome check .",
+    "format": "biome check --write .",
+    "typecheck": "tsc -b --pretty false && tsc -p scripts/tsconfig.json && pnpm --filter @hitman/web typecheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:go": "bash scripts/run-go.sh test ./...",
+    "vet:go": "bash scripts/run-go.sh vet ./...",
+    "db:dev": "bash scripts/dev-db.sh",
+    "db:generate": "pnpm --filter @hitman/database generate",
+    "db:migrate": "node --env-file-if-exists=.env --import tsx packages/database/src/migrate.ts",
+    "db:check": "pnpm --filter @hitman/database check",
+    "admin": "pnpm run build:packages && node --env-file-if-exists=.env --import tsx scripts/admin.ts",
+    "spike:mcp": "pnpm --filter @hitman/spike-mcp dev",
+    "spike:openapi": "pnpm --filter @hitman/spike-openapi test",
+    "spike:jobs": "pnpm --filter @hitman/spike-durable-jobs test",
+    "verify": "bash scripts/verify.sh"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.6.3",
+    "@types/node": "24.19.2",
+    "tsx": "4.23.15",
+    "typescript": "7.0.2",
+    "vitest": "5.0.5",
+    "yaml": "2.9.1"
+  }
+}

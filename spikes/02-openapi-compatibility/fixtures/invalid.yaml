@@ -1,0 +1,9 @@
+openapi: 3.1.0
+info:
+  version: 1.0.0
+paths:
+  /broken:
+    get:
+      responses:
+        "200":
+          description: This document is intentionally invalid because info.title is missing.

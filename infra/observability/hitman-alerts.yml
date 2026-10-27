@@ -1,0 +1,60 @@
+groups:
+  - name: hitman-foundation
+    rules:
+      - alert: HitmanServerDown
+        expr: up{job="hitman-server"} == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Hitman API server is not scrapeable
+          description: The API has been unreachable for more than two minutes.
+
+      - alert: HitmanWorkerDown
+        expr: up{job="hitman-worker"} == 0 or hitman_worker_up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: Hitman worker is not running
+          description: Durable job processing will not make progress.
+
+      - alert: HitmanDatabaseUnavailable
+        expr: increase(hitman_http_requests_total{route="/health/ready",status="503"}[5m]) > 0
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: Hitman readiness is failing
+          description: At least one readiness probe returned 503 in the last five minutes.
+
+      - alert: HitmanHttpErrorRateHigh
+        expr: |
+          sum(rate(hitman_http_requests_total{status=~"5.."}[5m]))
+          /
+          clamp_min(sum(rate(hitman_http_requests_total[5m])), 0.001)
+          > 0.05
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Hitman 5xx rate is above 5%
+          description: Investigate recent deploys, dependency health, and error logs.
+
+      - alert: HitmanMetricsUnavailable
+        expr: absent(hitman_http_requests_total) and on() (up{job="hitman-server"} == 1)
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Hitman request metrics are missing
+          description: The server is scrapeable but is not emitting HTTP metrics.
+
+      - alert: HitmanWorkerPollStalled
+        expr: increase(hitman_worker_poll_cycles_total[10m]) == 0
+        for: 10m
+        labels:
+          severity: warning
+        annotations:
+          summary: Hitman worker scheduling cycles have stopped
+          description: The worker process may be wedged or failing silently.

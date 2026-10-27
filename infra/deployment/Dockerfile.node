@@ -1,0 +1,46 @@
+# syntax=docker/dockerfile:1.7
+ARG NODE_VERSION=24.22.0
+FROM node:${NODE_VERSION}-bookworm-slim AS build
+
+ENV PNPM_HOME=/pnpm
+ENV PATH=$PNPM_HOME:$PATH
+RUN corepack enable && corepack prepare pnpm@12.14.0 --activate
+
+WORKDIR /app
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml .npmrc ./
+COPY apps/server/package.json apps/server/package.json
+COPY apps/worker/package.json apps/worker/package.json
+COPY apps/web/package.json apps/web/package.json
+COPY packages/contracts/package.json packages/contracts/package.json
+COPY packages/config/package.json packages/config/package.json
+COPY packages/database/package.json packages/database/package.json
+COPY spikes/02-mcp-compatibility/package.json spikes/02-mcp-compatibility/package.json
+COPY spikes/02-openapi-compatibility/package.json spikes/02-openapi-compatibility/package.json
+COPY spikes/02-durable-jobs/package.json spikes/02-durable-jobs/package.json
+RUN pnpm install --frozen-lockfile
+
+COPY packages packages
+COPY apps/server apps/server
+COPY apps/worker apps/worker
+COPY database database
+COPY tsconfig.json ./
+RUN pnpm exec tsc -b --pretty false
+
+FROM node:${NODE_VERSION}-bookworm-slim AS runtime
+
+ARG APP=server
+ENV NODE_ENV=production
+ENV HITMAN_APP=${APP}
+WORKDIR /app
+
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages ./packages
+COPY --from=build /app/apps/server/dist ./apps/server/dist
+COPY --from=build /app/apps/server/package.json ./apps/server/package.json
+COPY --from=build /app/apps/worker/dist ./apps/worker/dist
+COPY --from=build /app/apps/worker/package.json ./apps/worker/package.json
+COPY --from=build /app/database ./database
+
+USER node
+EXPOSE 8080 8081
+CMD ["sh", "-c", "exec node apps/${HITMAN_APP}/dist/index.js"]

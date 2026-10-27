@@ -1,0 +1,61 @@
+openapi: 3.0.3
+info:
+  title: Hitman Spike API
+  version: 1.0.0
+  description: Minimal OpenAPI 3.0 fixture.
+servers:
+  - url: http://127.0.0.1:3000
+paths:
+  /api/v1/bas:
+    get:
+      operationId: listBas
+      summary: List BA records
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+      responses:
+        "200":
+          description: A list of BA records
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ba"
+    post:
+      operationId: createBa
+      summary: Create a BA record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBa"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ba"
+components:
+  schemas:
+    Ba:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+    CreateBa:
+      type: object
+      required: [name]
+      properties:
+        name:
+          type: string

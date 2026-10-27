@@ -1,0 +1,36 @@
+{
+  "generatedAt": "2026-10-27T06:48:09Z",
+  "platform": "linux-wsl2",
+  "checks": [
+    {
+      "name": "http.http://127.0.0.1:40973/health",
+      "status": "ok",
+      "detail": "HTTP 200",
+      "durationMs": 1
+    },
+    {
+      "name": "http.http://localhost:40973/health",
+      "status": "ok",
+      "detail": "HTTP 200",
+      "durationMs": 1
+    },
+    {
+      "name": "wss.hello",
+      "status": "ok",
+      "detail": "WSS echo round trip",
+      "durationMs": 2
+    },
+    {
+      "name": "wss.heartbeat",
+      "status": "ok",
+      "detail": "WSS echo round trip",
+      "durationMs": 1
+    },
+    {
+      "name": "wss.reconnect",
+      "status": "ok",
+      "detail": "reconnected after clean close",
+      "durationMs": 2
+    }
+  ]
+}
