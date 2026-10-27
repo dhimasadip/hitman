@@ -156,8 +156,8 @@ export function TeamsPage({
           <div>
             <h2 className="text-lg font-semibold text-white">Teams</h2>
             <p className="mt-1 text-sm text-slate-400">
-              Teams group organization members. Project and device access policies arrive in later
-              phases.
+              Teams group organization members. Project access is explicit; team-linked access
+              policies arrive in later phases.
             </p>
           </div>
           <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">

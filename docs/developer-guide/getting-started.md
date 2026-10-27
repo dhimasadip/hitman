@@ -71,9 +71,11 @@ pnpm dev:web
 ```
 
 Open http://127.0.0.1:5173 and sign in. Vite proxies `/health`, `/version`, and
-`/api` to the API. The Phase 4 shell provides login/logout, organization
-switching, member/team administration, audit viewing, and password change.
-Projects and the request editor arrive in Phases 5–7.
+`/api` to the API. The app provides login/logout, organization switching,
+project management, member/team administration, audit viewing, and password
+change. Project source registration uses a deterministic mock GitLab catalog in
+Phase 5; live GitLab integration is Phase 15. OpenAPI parsing and the request
+editor arrive in Phases 6–7.
 
 ## 7. Run checks
 

@@ -1,7 +1,9 @@
 import type { Logger, ServerConfig } from "@hitman/config";
 import { AuditService } from "../audit/audit-service.js";
 import { AuthorizationService } from "../authorization/authorization-service.js";
+import { MockGitLabProvider } from "../gitlab/gitlab-provider.js";
 import { OrganizationService } from "../organizations/organization-service.js";
+import { ProjectService } from "../projects/project-service.js";
 import type { Db } from "../shared/db.js";
 import { AuthService } from "./auth-service.js";
 import { ProvisioningService } from "./provisioning-service.js";
@@ -13,6 +15,7 @@ export interface IdentityServices {
   sessions: SessionService;
   auth: AuthService;
   organizations: OrganizationService;
+  projects: ProjectService;
   provisioning: ProvisioningService;
 }
 
@@ -26,6 +29,15 @@ export function createIdentityServices(
   const sessions = new SessionService(db, config);
   const auth = new AuthService(db, sessions, authorization, audit, logger);
   const organizations = new OrganizationService(db, authorization, audit, sessions);
+  const projects = new ProjectService(db, authorization, audit, new MockGitLabProvider());
   const provisioning = new ProvisioningService(db, audit, sessions);
-  return { audit, authorization, sessions, auth, organizations, provisioning };
+  return {
+    audit,
+    authorization,
+    sessions,
+    auth,
+    organizations,
+    projects,
+    provisioning,
+  };
 }

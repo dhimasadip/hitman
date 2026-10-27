@@ -14,9 +14,10 @@ import {
 import { AuditPage } from "./AuditPage.js";
 import { MembersPage } from "./MembersPage.js";
 import { OverviewPage } from "./OverviewPage.js";
+import { ProjectsPage } from "./ProjectsPage.js";
 import { TeamsPage } from "./TeamsPage.js";
 
-type Tab = "overview" | "members" | "teams" | "audit";
+type Tab = "overview" | "projects" | "members" | "teams" | "audit";
 
 export function AppShell({
   session,
@@ -89,6 +90,7 @@ export function AppShell({
 
   const tabs: Array<{ id: Tab; label: string; visible: boolean }> = [
     { id: "overview", label: "Overview", visible: true },
+    { id: "projects", label: "Projects", visible: true },
     { id: "members", label: "Members", visible: true },
     { id: "teams", label: "Teams", visible: true },
     { id: "audit", label: "Audit", visible: isAdmin },
@@ -125,7 +127,7 @@ export function AppShell({
               <p className="text-lg font-semibold tracking-tight text-white">Hitman</p>
             </div>
             <span className="rounded-full border border-white/10 px-3 py-1 text-xs text-slate-400">
-              Phase 4 · Identity
+              Phase 5 · Projects
             </span>
           </div>
 
@@ -214,6 +216,16 @@ export function AppShell({
                   memberCount={membersQuery.data?.members.length ?? 0}
                   teamCount={teamsQuery.data?.teams.length ?? 0}
                   readiness={readinessQuery.data}
+                />
+              ) : null}
+              {tab === "projects" ? (
+                <ProjectsPage
+                  key={activeOrganizationId}
+                  organizationId={activeOrganizationId}
+                  isAdmin={isAdmin}
+                  organizationRole={activeOrganization.role}
+                  teams={teamsQuery.data?.teams ?? []}
+                  organizationMembers={membersQuery.data?.members ?? []}
                 />
               ) : null}
               {tab === "members" ? (

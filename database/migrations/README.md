@@ -34,9 +34,11 @@ Current baseline:
   infrastructure migration proving the pipeline.
 - `0001_identity_foundation.sql` — organizations, users, organization/team
   memberships, sessions, and audit events (Phase 4 / M001–M002 baseline).
+- `0002_projects_and_gitlab.sql` — projects, project memberships, GitLab
+  connections/repositories, and the audit project foreign key (Phase 5).
 
-Project, specification, request, environment, device, execution, and integration
-migrations begin in Phases 5–16 per `implementation-plan.md` §5.
+Request, environment, device, execution, and integration migrations begin in
+Phases 6–16 per `implementation-plan.md` §5.
 
 ## Rollback policy
 

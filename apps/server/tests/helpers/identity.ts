@@ -62,7 +62,7 @@ export async function createTestContext(
 
 export async function truncateIdentityTables(database: Database): Promise<void> {
   await database.pool.query(
-    "truncate table audit_events, sessions, team_memberships, teams, organization_memberships, users, organizations cascade",
+    "truncate table audit_events, gitlab_repositories, gitlab_connections, project_memberships, projects, sessions, team_memberships, teams, organization_memberships, users, organizations cascade",
   );
 }
 

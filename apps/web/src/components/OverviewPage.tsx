@@ -126,8 +126,8 @@ export function OverviewPage({
             <div>
               <h2 className="text-lg font-semibold text-white">Organization workspace</h2>
               <p className="mt-1 text-sm text-slate-400">
-                Identity, memberships, and audit trails are live. Projects and API requests arrive
-                in later phases.
+                Identity, memberships, projects, and audit trails are live. Requests and execution
+                arrive in later phases.
               </p>
             </div>
             <ReadinessPill readiness={readiness} />

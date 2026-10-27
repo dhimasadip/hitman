@@ -2,11 +2,14 @@ import {
   ApiError,
   type OrganizationRole,
   type OrganizationSummary,
+  type ProjectRole,
   type TeamRole,
 } from "@hitman/contracts";
 import {
   organizationMemberships,
   organizations,
+  projectMemberships,
+  projects,
   teamMemberships,
   teams,
 } from "@hitman/database/schema";
@@ -19,10 +22,16 @@ export interface TeamAccess {
   teamRole: TeamRole | null;
 }
 
+export interface ProjectAccess {
+  project: typeof projects.$inferSelect;
+  organizationRole: OrganizationRole;
+  projectRole: ProjectRole | null;
+  effectiveRole: ProjectRole;
+}
+
 /**
- * Single server-side authorization boundary for organization and team
- * resources. Project/request/device checks are added in later phases when those
- * tables exist; no route may bypass this service for org/team access.
+ * Single server-side authorization boundary for organization, team, and project
+ * resources. No route may bypass this service for access decisions.
  */
 export class AuthorizationService {
   constructor(private readonly db: Db) {}
@@ -110,5 +119,74 @@ export class AuthorizationService {
     }
 
     return { team, organizationRole, teamRole };
+  }
+
+  async requireProjectRead(userId: string, projectId: string): Promise<ProjectAccess> {
+    const projectRows = await this.db
+      .select()
+      .from(projects)
+      .where(eq(projects.id, projectId))
+      .limit(1);
+    const project = projectRows[0];
+    if (!project) throw ApiError.notFound("Project not found");
+
+    const organizationRole = await this.getOrganizationRole(userId, project.organizationId);
+    if (!organizationRole) throw ApiError.notFound("Project not found");
+
+    if (organizationRole === "org_admin") {
+      return {
+        project,
+        organizationRole,
+        projectRole: null,
+        effectiveRole: "project_admin",
+      };
+    }
+
+    const membershipRows = await this.db
+      .select({ role: projectMemberships.role })
+      .from(projectMemberships)
+      .where(
+        and(eq(projectMemberships.projectId, projectId), eq(projectMemberships.userId, userId)),
+      )
+      .limit(1);
+    const projectRole = membershipRows[0]?.role;
+    if (!projectRole) throw ApiError.notFound("Project not found");
+
+    return {
+      project,
+      organizationRole,
+      projectRole,
+      effectiveRole: projectRole,
+    };
+  }
+
+  async requireProjectManage(userId: string, projectId: string): Promise<ProjectAccess> {
+    const access = await this.requireProjectRead(userId, projectId);
+    if (access.organizationRole === "read_only" || access.effectiveRole !== "project_admin") {
+      throw ApiError.forbidden("Project administrator role required");
+    }
+    return access;
+  }
+
+  async requireProjectEdit(userId: string, projectId: string): Promise<ProjectAccess> {
+    const access = await this.requireProjectRead(userId, projectId);
+    if (
+      access.organizationRole === "read_only" ||
+      !["project_admin", "editor"].includes(access.effectiveRole)
+    ) {
+      throw ApiError.forbidden("Project editor role required");
+    }
+    return access;
+  }
+
+  async requireProjectExecute(userId: string, projectId: string): Promise<ProjectAccess> {
+    const access = await this.requireProjectRead(userId, projectId);
+    if (
+      access.organizationRole === "read_only" ||
+      !["project_admin", "editor", "executor"].includes(access.effectiveRole)
+    ) {
+      throw ApiError.forbidden("Project executor role required");
+    }
+    return access;
   }
 }

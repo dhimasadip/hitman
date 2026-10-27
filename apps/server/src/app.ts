@@ -24,6 +24,7 @@ import { Counter, collectDefaultMetrics, Histogram, Registry } from "prom-client
 import { registerAuthRoutes } from "./modules/identity/auth-routes.js";
 import { createIdentityServices } from "./modules/identity/services.js";
 import { registerOrganizationRoutes } from "./modules/organizations/organization-routes.js";
+import { registerProjectRoutes } from "./modules/projects/project-routes.js";
 import { registerAuthPlugin } from "./plugins/auth.js";
 
 export interface AppDependencies {
@@ -161,6 +162,7 @@ export async function buildApp(deps: AppDependencies) {
     config,
     organizations: identity.organizations,
   });
+  await registerProjectRoutes(routeApp, { config, projects: identity.projects });
 
   const metrics = createMetrics("hitman-server", deps.metadata.version);
   const metricsEnabled =

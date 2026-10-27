@@ -13,6 +13,8 @@ import {
   auditEvents,
   organizationMemberships,
   organizations,
+  projectMemberships,
+  projects,
   teamMemberships,
   teams,
   users,
@@ -231,6 +233,35 @@ export class OrganizationService {
       if (target.role === "org_admin") {
         await this.ensureNotLastAdmin(tx, organizationId);
       }
+
+      const targetProjects = await tx
+        .select({ projectId: projectMemberships.projectId, role: projectMemberships.role })
+        .from(projectMemberships)
+        .innerJoin(projects, eq(projects.id, projectMemberships.projectId))
+        .where(
+          and(
+            eq(projects.organizationId, organizationId),
+            eq(projectMemberships.userId, targetUserId),
+          ),
+        );
+      for (const project of targetProjects) {
+        if (project.role !== "project_admin") continue;
+        const admins = await tx
+          .select({ userId: projectMemberships.userId })
+          .from(projectMemberships)
+          .where(
+            and(
+              eq(projectMemberships.projectId, project.projectId),
+              eq(projectMemberships.role, "project_admin"),
+            ),
+          );
+        if (admins.length <= 1) {
+          throw ApiError.conflict(
+            "Cannot remove a member who is the last administrator of an organization project",
+          );
+        }
+      }
+
       await tx
         .delete(organizationMemberships)
         .where(
@@ -250,6 +281,20 @@ export class OrganizationService {
                 .select({ id: teams.id })
                 .from(teams)
                 .where(eq(teams.organizationId, organizationId)),
+            ),
+          ),
+        );
+      await tx
+        .delete(projectMemberships)
+        .where(
+          and(
+            eq(projectMemberships.userId, targetUserId),
+            inArray(
+              projectMemberships.projectId,
+              tx
+                .select({ id: projects.id })
+                .from(projects)
+                .where(eq(projects.organizationId, organizationId)),
             ),
           ),
         );

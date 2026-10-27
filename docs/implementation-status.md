@@ -1,7 +1,7 @@
-# Implementation status — Phases 0–4
+# Implementation status — Phases 0–5
 
 **Date:** 2026-10-27
-**Map:** `implementation-plan.md` Phases 0–4.
+**Map:** `implementation-plan.md` Phases 0–5.
 **Important:** This is an engineering status record, not a rewrite of the plan.
 Later phases are intentionally not started.
 
@@ -85,14 +85,35 @@ GitLab.
   password reset
 - Evidence: `docs/phase-4-identity.md`, `apps/server/tests/auth.integration.test.ts`.
 
+## Phase 5 — Projects and repository registration: complete
+
+- [x] Organization-scoped project create/read/update/archive/restore
+- [x] Organization-admin-only creation; creator becomes project_admin
+- [x] Explicit project memberships (project_admin/editor/executor/viewer)
+- [x] Organization admins have implicit project-admin access
+- [x] Last-project-administrator protection
+- [x] Project member add/role/remove with organization-membership validation
+- [x] Organization-member removal cleans project/team memberships and protects
+  last project administrators
+- [x] Project list/search/status filtering with member vs admin visibility
+- [x] Optional owner-team metadata (no implicit access)
+- [x] Mock GitLab provider and fixture repository picker
+- [x] One repository per project and one project per repository
+- [x] Repository OpenAPI path storage/update; unsafe path rejection
+- [x] Archive read-only behavior and audit events
+- [x] Projects UI: list/create, overview/onboarding, members, source, settings
+- [x] 14 PostgreSQL-backed project/mock-GitLab integration tests
+- Evidence: `docs/phase-5-projects.md`,
+  `apps/server/tests/projects.integration.test.ts`.
+
 ## Explicitly not started
 
-Project CRUD, request collections/editor, production MCP endpoint/tools, Go
-runner enrollment/protocol/execution, GitLab webhooks, deployment evidence,
-hardening, pilot. OAuth AS/MCP token endpoints remain Phase 9 work.
+Request collections/editor, OpenAPI parsing/import, environments/secrets,
+production MCP endpoint/tools, Go runner enrollment/protocol/execution, live
+GitLab webhooks/reconciliation, deployment evidence, hardening, pilot. OAuth
+AS/MCP token endpoints remain Phase 9 work; live GitLab remains Phase 15.
 
 ## Next gate
 
-Phase 5 — project creation, project memberships, and optional GitLab repository
-registration. Projects must remain creatable without a repository, specification,
-or runner.
+Phase 6 — API specifications, collections, request definitions, immutable
+versioning, and the request/catalog backend.

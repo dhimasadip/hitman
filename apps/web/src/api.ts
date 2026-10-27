@@ -1,19 +1,31 @@
 import type {
   AddOrganizationMemberRequest,
+  AddProjectMemberRequest,
   AddTeamMemberRequest,
   AuditEvent,
   ChangePasswordRequest,
+  CreateProjectRequest,
   CreateTeamRequest,
+  LinkRepositoryRequest,
   LoginRequest,
+  MockRepository,
   OrganizationDetail,
   OrganizationMember,
   OrganizationRole,
   OrganizationSummary,
+  ProjectDetail,
+  ProjectMember,
+  ProjectRepository,
+  ProjectRole,
+  ProjectStatusFilter,
+  ProjectSummary,
   SessionResponse,
   TeamDetail,
   TeamRole,
   TeamSummary,
   UpdateOrganizationRequest,
+  UpdateProjectRequest,
+  UpdateRepositoryRequest,
 } from "@hitman/contracts";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
@@ -221,3 +233,102 @@ export async function fetchReadiness(): Promise<Readiness> {
 }
 
 export type { AuditEvent, OrganizationMember, OrganizationSummary, TeamDetail, TeamSummary };
+
+export function listProjects(
+  organizationId: string,
+  options: { search?: string; status?: ProjectStatusFilter; limit?: number } = {},
+): Promise<{ projects: ProjectSummary[] }> {
+  const params = new URLSearchParams();
+  if (options.search) params.set("q", options.search);
+  if (options.status) params.set("status", options.status);
+  if (options.limit) params.set("limit", String(options.limit));
+  const query = params.size > 0 ? `?${params.toString()}` : "";
+  return request(`/api/v1/organizations/${organizationId}/projects${query}`);
+}
+
+export function createProject(
+  organizationId: string,
+  body: CreateProjectRequest,
+): Promise<ProjectDetail> {
+  return request(`/api/v1/organizations/${organizationId}/projects`, {
+    method: "POST",
+    body,
+  });
+}
+
+export function getProject(projectId: string): Promise<ProjectDetail> {
+  return request(`/api/v1/projects/${projectId}`);
+}
+
+export function updateProject(
+  projectId: string,
+  body: UpdateProjectRequest,
+): Promise<ProjectDetail> {
+  return request(`/api/v1/projects/${projectId}`, { method: "PATCH", body });
+}
+
+export function archiveProject(projectId: string): Promise<ProjectDetail> {
+  return request(`/api/v1/projects/${projectId}/archive`, { method: "POST" });
+}
+
+export function restoreProject(projectId: string): Promise<ProjectDetail> {
+  return request(`/api/v1/projects/${projectId}/restore`, { method: "POST" });
+}
+
+export function listProjectMembers(projectId: string): Promise<{ members: ProjectMember[] }> {
+  return request(`/api/v1/projects/${projectId}/members`);
+}
+
+export function addProjectMember(
+  projectId: string,
+  body: AddProjectMemberRequest,
+): Promise<ProjectMember> {
+  return request(`/api/v1/projects/${projectId}/members`, { method: "POST", body });
+}
+
+export function updateProjectMemberRole(
+  projectId: string,
+  userId: string,
+  role: ProjectRole,
+): Promise<void> {
+  return request(`/api/v1/projects/${projectId}/members/${userId}`, {
+    method: "PATCH",
+    body: { role },
+  });
+}
+
+export function removeProjectMember(projectId: string, userId: string): Promise<void> {
+  return request(`/api/v1/projects/${projectId}/members/${userId}`, { method: "DELETE" });
+}
+
+export function getProjectRepository(
+  projectId: string,
+): Promise<{ repository: ProjectRepository | null }> {
+  return request(`/api/v1/projects/${projectId}/repository`);
+}
+
+export function listMockRepositories(
+  projectId: string,
+): Promise<{ repositories: MockRepository[] }> {
+  return request(`/api/v1/projects/${projectId}/gitlab/repositories`);
+}
+
+export function linkRepository(
+  projectId: string,
+  body: LinkRepositoryRequest,
+): Promise<ProjectRepository> {
+  return request(`/api/v1/projects/${projectId}/repository`, { method: "POST", body });
+}
+
+export function updateRepository(
+  projectId: string,
+  body: UpdateRepositoryRequest,
+): Promise<ProjectRepository> {
+  return request(`/api/v1/projects/${projectId}/repository`, { method: "PATCH", body });
+}
+
+export function unlinkRepository(projectId: string): Promise<void> {
+  return request(`/api/v1/projects/${projectId}/repository`, { method: "DELETE" });
+}
+
+export type { MockRepository, ProjectDetail, ProjectMember, ProjectRepository, ProjectSummary };

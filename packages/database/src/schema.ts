@@ -35,6 +35,13 @@ export const organizationRoleEnum = pgEnum("organization_role", [
   "read_only",
 ]);
 export const teamRoleEnum = pgEnum("team_role", ["team_admin", "member", "viewer"]);
+export const projectStatusEnum = pgEnum("project_status", ["active", "archived"]);
+export const projectRoleEnum = pgEnum("project_role", [
+  "project_admin",
+  "editor",
+  "executor",
+  "viewer",
+]);
 export const auditActorTypeEnum = pgEnum("audit_actor_type", ["user", "device", "system"]);
 export const auditOutcomeEnum = pgEnum("audit_outcome", ["success", "failure"]);
 
@@ -127,6 +134,112 @@ export const teamMemberships = pgTable(
   ],
 );
 
+export const projects = pgTable(
+  "projects",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    ownerTeamId: uuid("owner_team_id").references(() => teams.id, { onDelete: "set null" }),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
+    description: text("description"),
+    status: projectStatusEnum("status").notNull().default("active"),
+    settings: jsonb("settings")
+      .$type<Record<string, unknown>>()
+      .notNull()
+      .default(sql`'{}'::jsonb`),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    archivedAt: timestamp("archived_at", { withTimezone: true }),
+  },
+  (table) => [
+    uniqueIndex("projects_org_slug_unique").on(table.organizationId, table.slug),
+    index("projects_org_status_idx").on(table.organizationId, table.status),
+    index("projects_owner_team_idx").on(table.ownerTeamId),
+  ],
+);
+
+export const projectMemberships = pgTable(
+  "project_memberships",
+  {
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    userId: uuid("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+    role: projectRoleEnum("role").notNull(),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.projectId, table.userId] }),
+    index("project_memberships_user_idx").on(table.userId),
+    index("project_memberships_project_role_idx").on(table.projectId, table.role),
+  ],
+);
+
+export const gitlabConnections = pgTable(
+  "gitlab_connections",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    gitlabInstanceUrl: text("gitlab_instance_url").notNull(),
+    authMode: text("auth_mode").notNull(),
+    credentialSecretRef: text("credential_secret_ref").notNull(),
+    status: text("status").notNull(),
+    lastVerifiedAt: timestamp("last_verified_at", { withTimezone: true }),
+    createdBy: uuid("created_by")
+      .notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("gitlab_connections_org_idx").on(table.organizationId),
+    uniqueIndex("gitlab_connections_mock_org_unique")
+      .on(table.organizationId)
+      .where(sql`${table.authMode} = 'mock'`),
+  ],
+);
+
+export const gitlabRepositories = pgTable(
+  "gitlab_repositories",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    projectId: uuid("project_id")
+      .notNull()
+      .references(() => projects.id, { onDelete: "cascade" }),
+    gitlabConnectionId: uuid("gitlab_connection_id")
+      .notNull()
+      .references(() => gitlabConnections.id, { onDelete: "cascade" }),
+    externalProjectId: text("external_project_id").notNull(),
+    namespacePath: text("namespace_path").notNull(),
+    repositoryName: text("repository_name").notNull(),
+    repositoryUrl: text("repository_url").notNull(),
+    defaultBranch: text("default_branch"),
+    openapiFilePath: text("openapi_file_path"),
+    webhookStatus: text("webhook_status").notNull(),
+    lastReconciledAt: timestamp("last_reconciled_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("gitlab_repositories_project_unique").on(table.projectId),
+    uniqueIndex("gitlab_repositories_connection_external_unique").on(
+      table.gitlabConnectionId,
+      table.externalProjectId,
+    ),
+    index("gitlab_repositories_connection_idx").on(table.gitlabConnectionId),
+  ],
+);
+
 export const sessions = pgTable(
   "sessions",
   {
@@ -165,7 +278,7 @@ export const auditEvents = pgTable(
     action: text("action").notNull(),
     resourceType: text("resource_type").notNull(),
     resourceId: uuid("resource_id"),
-    projectId: uuid("project_id"),
+    projectId: uuid("project_id").references(() => projects.id, { onDelete: "restrict" }),
     outcome: auditOutcomeEnum("outcome").notNull(),
     correlationId: text("correlation_id"),
     metadata: jsonb("metadata")
@@ -188,6 +301,10 @@ export const schema = {
   organizationMemberships,
   teams,
   teamMemberships,
+  projects,
+  projectMemberships,
+  gitlabConnections,
+  gitlabRepositories,
   sessions,
   auditEvents,
 };

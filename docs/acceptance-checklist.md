@@ -36,6 +36,9 @@ production release; no criterion is waived because an owner is unnamed.
 - Phase 4 identity: `docs/phase-4-identity.md` (13 PostgreSQL-backed auth/RBAC
   tests, including cross-organization denial, CSRF, last-admin protection,
   expiry, disabled accounts, password rotation, and rate limiting).
+- Phase 5 projects: `docs/phase-5-projects.md` (14 PostgreSQL-backed project and
+  mock-GitLab tests, including creation without integrations, access visibility,
+  last-admin protection, archive behavior, repository uniqueness, and audit).
 
 ## Gates
 

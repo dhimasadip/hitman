@@ -44,6 +44,14 @@ than typing them into shell history. Login attempts are rate-limited (10 per 60
 seconds per IP by default). Sessions live in the database; deleting
 `.dev/postgres` removes them.
 
+## Projects and mock GitLab
+
+Organization admins create projects from the UI. Project access is explicit;
+organization admins can manage every project. The Source tab uses the Phase 5
+mock GitLab catalog (`acme/app-a`, `acme/app-b`, `platform/shared-api`). Linking
+a repository stores metadata only in development; it does not call GitLab or
+store a token. OpenAPI paths are stored but not parsed until Phase 6.
+
 ## Recover from a bad local database
 
 ```bash

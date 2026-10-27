@@ -35,6 +35,15 @@
 9. A manual deployment declaration, if added, is labeled `manual_approved` with
    actor and audit evidence; it is never presented as automatically verified.
 
+## Implementation sequencing note (Phase 5)
+
+Phase 5 uses an explicit `MockGitLabProvider` and `auth_mode='mock'` connection
+metadata so the project and repository-registration workflows can be built
+without inventing live GitLab state. Only an `env://` secret reference is stored;
+no token is used or persisted. The UI labels mock sources. Live PAT/OAuth,
+repository metadata verification, webhooks, and reconciliation remain Phase 15
+work behind the same provider/service boundary.
+
 ## Consequences
 
 - Phase 15 requires webhook secret rotation, replay tooling, and a failed-event

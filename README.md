@@ -4,12 +4,11 @@ Hitman is an internal API catalog and execution hub for developers and AI coding
 agents. It combines a Postman-like web workspace, a hosted MCP endpoint, and
 persistent local runners for Windows and WSL2.
 
-**Current status:** Phases 0–4 of `implementation-plan.md` are implemented:
+**Current status:** Phases 0–5 of `implementation-plan.md` are implemented:
 decisions/ADRs, repository and CI foundations, technical validation spikes, the
-local/runtime baseline, and the identity/authorization foundation (password +
-Argon2id, sessions, organizations, teams, RBAC, audit, authenticated UI).
-Projects, requests, production MCP tools, runners, and GitLab reconciliation
-start in Phase 5.
+local/runtime baseline, identity/organization/RBAC, and project management with
+mock GitLab repository registration. Requests, OpenAPI import, production MCP
+tools, runners, and live GitLab reconciliation start in Phase 6.
 
 - Product source of truth: [`Hitman-PRD.md`](Hitman-PRD.md)
 - Delivery plan: [`implementation-plan.md`](implementation-plan.md)
@@ -18,6 +17,7 @@ start in Phase 5.
 - Phase 2 evidence: [`docs/phase-2-spike-results.md`](docs/phase-2-spike-results.md)
 - Phase 3 runtime: [`docs/phase-3-runtime.md`](docs/phase-3-runtime.md)
 - Phase 4 identity: [`docs/phase-4-identity.md`](docs/phase-4-identity.md)
+- Phase 5 projects: [`docs/phase-5-projects.md`](docs/phase-5-projects.md)
 
 ## Quick start
 
@@ -54,11 +54,11 @@ Full guide: [`docs/developer-guide/getting-started.md`](docs/developer-guide/get
 apps/
   server/    Fastify API, auth/org/team services, health, metrics, errors
   worker/    worker health server + scheduling boundary
-  web/       React/Vite authenticated app shell, members/teams/audit views
+  web/       React/Vite auth, projects, members, teams, audit views
 packages/
-  contracts/ shared error/health/identity schemas
+  contracts/ shared error/health/identity/project schemas
   config/    env validation, logging, redaction, secret/storage interfaces
-  database/  Drizzle client, migration runner, identity schema
+  database/  Drizzle client, migration runner, identity/project schema
 database/    checked-in migrations and seeds
 runner-go/   Go runner foundation: version, config, destination policy
 spikes/      MCP, OpenAPI, WSL2 networking, durable-job proofs
@@ -70,7 +70,8 @@ docs/        ADRs, policies, architecture, runbooks, phase evidence
 
 - API: `GET /health/live`, `GET /health/ready`, `GET /version`, `GET /metrics`
 - Auth: `/api/v1/auth/login|session|logout|switch-organization|change-password`
-- Organizations: `/api/v1/organizations/...` (members, teams, audit)
+- Organizations: `/api/v1/organizations/...` (members, teams, audit, projects)
+- Projects: `/api/v1/projects/...` (members, mocked repository, archive)
 - Worker: same health/metrics surface on port 8081
 - Web: authenticated workspace at `http://127.0.0.1:5173`
 
@@ -83,6 +84,10 @@ staging ingress blocks external `/metrics`.
   sessions and CSRF protection. Break-glass login is disabled. SAML federation
   is later; Hitman's OAuth 2.1 authorization-server endpoints ship with the MCP
   endpoint in Phase 9.
+- Project access is explicit membership only; organization admins manage all
+  projects. Owner teams are metadata, not an access grant.
+- GitLab repository registration is mocked in Phase 5; live API/OAuth/webhooks
+  arrive in Phase 15.
 - MCP uses the official TypeScript SDK v2 over Streamable HTTP; business/job
   state is always in PostgreSQL, never in MCP sessions.
 - Requests are created before commit; creation never implies execution, merge,
@@ -128,6 +133,5 @@ See [`docs/adr/`](docs/adr/) for rationale.
 
 ## Next phase
 
-Phase 5 — projects, project memberships, and optional GitLab repository
-registration. Projects must remain creatable without a repository, OpenAPI
-specification, or runner.
+Phase 6 — OpenAPI specifications, collections, request definitions, and
+immutable versioning. Live GitLab and request execution remain later phases.

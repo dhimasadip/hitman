@@ -41,6 +41,17 @@ gates before production runner rollout.
 Remote `$ref` URLs are rejected; local import bundles only, subject to size/time
 limits (Phase 6).
 
+## GitLab
+
+| Integration                         | Status                                |
+| ----------------------------------- | ------------------------------------- |
+| Mock repository catalog             | Phase 5 implemented and labeled in UI |
+| Live GitLab.com repository metadata | Phase 15                              |
+| PAT/OAuth credential verification   | Phase 15                              |
+| Webhooks/reconciliation/deployments | Phases 15–16                          |
+
+No token is required for Phase 5 mock repository selection.
+
 ## Runtime stack
 
 | Component           | Pin                                   |

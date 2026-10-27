@@ -46,7 +46,7 @@ export function LoginPage({ onLoggedIn }: { onLoggedIn: (session: SessionRespons
           </p>
           <div className="mt-8 grid gap-3 text-sm text-slate-400 sm:grid-cols-3">
             {[
-              ["Phase 4", "Identity foundation"],
+              ["Phase 5", "Identity + projects"],
               ["Org scoped", "RBAC enforced"],
               ["Audited", "Privileged actions"],
             ].map(([label, detail]) => (
