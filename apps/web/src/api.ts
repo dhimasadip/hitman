@@ -2,10 +2,26 @@ import type {
   AddOrganizationMemberRequest,
   AddProjectMemberRequest,
   AddTeamMemberRequest,
+  ApiOperationSummary,
+  ApiRequestDetail,
+  ApiRequestSummary,
+  ApiRequestVersion,
+  ApiRequestVersionSummary,
+  ApiSpecificationDetail,
+  ApiSpecificationSummary,
+  ApiSpecificationVersionSummary,
   AuditEvent,
   ChangePasswordRequest,
+  CollectionDetail,
+  CollectionFolderSummary,
+  CollectionSummary,
+  CreateCollectionFolderRequest,
+  CreateCollectionRequest,
   CreateProjectRequest,
+  CreateRequestRequest,
   CreateTeamRequest,
+  ImportSpecificationRequest,
+  ImportSpecificationResponse,
   LinkRepositoryRequest,
   LoginRequest,
   MockRepository,
@@ -23,9 +39,12 @@ import type {
   TeamDetail,
   TeamRole,
   TeamSummary,
+  UpdateCollectionFolderRequest,
+  UpdateCollectionRequest,
   UpdateOrganizationRequest,
   UpdateProjectRequest,
   UpdateRepositoryRequest,
+  UpdateRequestRequest,
 } from "@hitman/contracts";
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
@@ -332,3 +351,171 @@ export function unlinkRepository(projectId: string): Promise<void> {
 }
 
 export type { MockRepository, ProjectDetail, ProjectMember, ProjectRepository, ProjectSummary };
+
+export function listSpecifications(
+  projectId: string,
+): Promise<{ specifications: ApiSpecificationSummary[] }> {
+  return request(`/api/v1/projects/${projectId}/specifications`);
+}
+
+export function importSpecification(
+  projectId: string,
+  body: ImportSpecificationRequest,
+): Promise<ImportSpecificationResponse> {
+  return request(`/api/v1/projects/${projectId}/specifications/import`, {
+    method: "POST",
+    body,
+  });
+}
+
+export function getSpecification(
+  projectId: string,
+  specificationId: string,
+): Promise<ApiSpecificationDetail> {
+  return request(`/api/v1/projects/${projectId}/specifications/${specificationId}`);
+}
+
+export function listOperations(
+  projectId: string,
+  options: { specificationId?: string; q?: string; method?: string } = {},
+): Promise<{ operations: ApiOperationSummary[] }> {
+  const params = new URLSearchParams();
+  if (options.specificationId) params.set("specificationId", options.specificationId);
+  if (options.q) params.set("q", options.q);
+  if (options.method) params.set("method", options.method);
+  const query = params.size > 0 ? `?${params.toString()}` : "";
+  return request(`/api/v1/projects/${projectId}/operations${query}`);
+}
+
+export function listCollections(projectId: string): Promise<{ collections: CollectionDetail[] }> {
+  return request(`/api/v1/projects/${projectId}/collections`);
+}
+
+export function createCollection(
+  projectId: string,
+  body: CreateCollectionRequest,
+): Promise<CollectionSummary> {
+  return request(`/api/v1/projects/${projectId}/collections`, { method: "POST", body });
+}
+
+export function updateCollection(
+  projectId: string,
+  collectionId: string,
+  body: UpdateCollectionRequest,
+): Promise<CollectionSummary> {
+  return request(`/api/v1/projects/${projectId}/collections/${collectionId}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export function deleteCollection(projectId: string, collectionId: string): Promise<void> {
+  return request(`/api/v1/projects/${projectId}/collections/${collectionId}`, {
+    method: "DELETE",
+  });
+}
+
+export function createFolder(
+  projectId: string,
+  collectionId: string,
+  body: CreateCollectionFolderRequest,
+): Promise<CollectionFolderSummary> {
+  return request(`/api/v1/projects/${projectId}/collections/${collectionId}/folders`, {
+    method: "POST",
+    body,
+  });
+}
+
+export function updateFolder(
+  projectId: string,
+  collectionId: string,
+  folderId: string,
+  body: UpdateCollectionFolderRequest,
+): Promise<CollectionFolderSummary> {
+  return request(`/api/v1/projects/${projectId}/collections/${collectionId}/folders/${folderId}`, {
+    method: "PATCH",
+    body,
+  });
+}
+
+export function deleteFolder(
+  projectId: string,
+  collectionId: string,
+  folderId: string,
+): Promise<void> {
+  return request(`/api/v1/projects/${projectId}/collections/${collectionId}/folders/${folderId}`, {
+    method: "DELETE",
+  });
+}
+
+export function listRequests(
+  projectId: string,
+  options: {
+    q?: string;
+    method?: string;
+    path?: string;
+    lifecycle?: string;
+    collectionId?: string;
+    folderId?: string;
+    tag?: string;
+    limit?: number;
+  } = {},
+): Promise<{ requests: ApiRequestSummary[] }> {
+  const params = new URLSearchParams();
+  for (const [key, value] of Object.entries(options)) {
+    if (value !== undefined && value !== "") params.set(key, String(value));
+  }
+  const query = params.size > 0 ? `?${params.toString()}` : "";
+  return request(`/api/v1/projects/${projectId}/requests${query}`);
+}
+
+export function createRequest(
+  projectId: string,
+  body: CreateRequestRequest,
+): Promise<ApiRequestDetail> {
+  return request(`/api/v1/projects/${projectId}/requests`, { method: "POST", body });
+}
+
+export function getRequest(requestId: string): Promise<ApiRequestDetail> {
+  return request(`/api/v1/requests/${requestId}`);
+}
+
+export function updateRequest(
+  requestId: string,
+  body: UpdateRequestRequest,
+): Promise<ApiRequestDetail> {
+  return request(`/api/v1/requests/${requestId}`, { method: "PATCH", body });
+}
+
+export function archiveRequest(requestId: string): Promise<ApiRequestDetail> {
+  return request(`/api/v1/requests/${requestId}/archive`, { method: "POST" });
+}
+
+export function listRequestVersions(
+  requestId: string,
+): Promise<{ versions: ApiRequestVersionSummary[] }> {
+  return request(`/api/v1/requests/${requestId}/versions`);
+}
+
+export function getRequestVersion(
+  requestId: string,
+  versionId: string,
+): Promise<ApiRequestVersion> {
+  return request(`/api/v1/requests/${requestId}/versions/${versionId}`);
+}
+
+export type {
+  ApiOperationSummary,
+  ApiRequestDetail,
+  ApiRequestSummary,
+  ApiRequestVersion,
+  ApiRequestVersionSummary,
+  ApiSpecificationDetail,
+  ApiSpecificationSummary,
+  ApiSpecificationVersionSummary,
+  CollectionDetail,
+  CollectionFolderSummary,
+  CollectionSummary,
+  ImportSpecificationRequest,
+  ImportSpecificationResponse,
+};

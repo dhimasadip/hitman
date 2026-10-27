@@ -39,6 +39,9 @@ production release; no criterion is waived because an owner is unnamed.
 - Phase 5 projects: `docs/phase-5-projects.md` (14 PostgreSQL-backed project and
   mock-GitLab tests, including creation without integrations, access visibility,
   last-admin protection, archive behavior, repository uniqueness, and audit).
+- Phase 6 catalog: `docs/phase-6-catalog.md` (10 PostgreSQL-backed tests for
+  OpenAPI import/validation, multiple specs/versions, operations, collections,
+  request versions, permissions, search, archive, and audit).
 
 ## Gates
 

@@ -22,6 +22,13 @@
       "when": 1793107142833,
       "tag": "0002_projects_and_gitlab",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1793108462565,
+      "tag": "0003_api_catalog",
+      "breakpoints": true
     }
   ]
 }

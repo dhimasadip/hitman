@@ -23,8 +23,9 @@ import {
   updateProjectMemberRole,
   updateRepository,
 } from "../api.js";
+import { CatalogPage } from "./CatalogPage.js";
 
-type ProjectTab = "overview" | "members" | "source" | "settings";
+type ProjectTab = "overview" | "catalog" | "members" | "source" | "settings";
 
 const inputClass =
   "mt-1 w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2.5 text-sm text-slate-100 outline-none transition focus:border-blue-400/60 focus:ring-2 focus:ring-blue-400/20";
@@ -85,6 +86,12 @@ export function ProjectWorkspace({
   const canManage = project?.role === "project_admin" && organizationRole !== "read_only";
   const isArchived = project?.status === "archived";
   const canEdit = Boolean(canManage && !isArchived);
+  const canEditCatalog = Boolean(
+    project &&
+      organizationRole !== "read_only" &&
+      !isArchived &&
+      (project.role === "project_admin" || project.role === "editor"),
+  );
 
   useEffect(() => {
     if (!project) return;
@@ -296,6 +303,7 @@ export function ProjectWorkspace({
 
   const tabs: Array<{ id: ProjectTab; label: string }> = [
     { id: "overview", label: "Overview" },
+    { id: "catalog", label: "Catalog" },
     { id: "members", label: "Members" },
     { id: "source", label: "Source" },
     ...(isOrganizationAdmin || canManage ? [{ id: "settings" as const, label: "Settings" }] : []),
@@ -447,6 +455,10 @@ export function ProjectWorkspace({
             ) : null}
           </section>
         </div>
+      ) : null}
+
+      {tab === "catalog" ? (
+        <CatalogPage projectId={project.id} canEdit={canEditCatalog} repository={repository} />
       ) : null}
 
       {tab === "members" ? (

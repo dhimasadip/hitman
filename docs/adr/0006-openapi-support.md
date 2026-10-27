@@ -46,3 +46,12 @@ fixtures: `spikes/02-openapi-compatibility/`.
 - Phase 6 must add its own import-size/time limits and remote-ref rejection.
 - 3.2 support is a future opt-in with new tests; do not infer it from the
   specification version alone.
+
+## Implementation note (Phase 6)
+
+Phase 6 implements raw/file upload and mock-repository-path import using
+`@redocly/openapi-core` with the `struct` rule. 3.0.x/3.1.x are accepted; 3.2.x
+is rejected. External/remote `$ref` values are rejected before parsing, raw
+documents are stored with a 5 MiB limit, and invalid imports are retained as
+failed versions without replacing the current valid version. Remote HTTPS URL
+import and spec diffing remain Phase 15.

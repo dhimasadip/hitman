@@ -36,9 +36,12 @@ Current baseline:
   memberships, sessions, and audit events (Phase 4 / M001–M002 baseline).
 - `0002_projects_and_gitlab.sql` — projects, project memberships, GitLab
   connections/repositories, and the audit project foreign key (Phase 5).
+- `0003_api_catalog.sql` — OpenAPI specs/versions/operations, collections and
+  folders, request definitions/versions, and source observation/link tables
+  (Phase 6).
 
-Request, environment, device, execution, and integration migrations begin in
-Phases 6–16 per `implementation-plan.md` §5.
+Environment, device, execution, and integration migrations begin in Phases 8–16
+per `implementation-plan.md` §5.
 
 ## Rollback policy
 

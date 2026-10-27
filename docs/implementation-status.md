@@ -1,7 +1,7 @@
-# Implementation status — Phases 0–5
+# Implementation status — Phases 0–6
 
 **Date:** 2026-10-27
-**Map:** `implementation-plan.md` Phases 0–5.
+**Map:** `implementation-plan.md` Phases 0–6.
 **Important:** This is an engineering status record, not a rewrite of the plan.
 Later phases are intentionally not started.
 
@@ -106,14 +106,31 @@ GitLab.
 - Evidence: `docs/phase-5-projects.md`,
   `apps/server/tests/projects.integration.test.ts`.
 
+## Phase 6 — API catalog, OpenAPI, collections, and request versions: complete
+
+- [x] Multiple logical OpenAPI specs per project with immutable versions
+- [x] 3.0/3.1 import, 3.2 rejection, Redocly validation
+- [x] Raw upload and mock repository-path import
+- [x] External/remote `$ref` rejection and 5 MiB document limit
+- [x] Operation extraction, version-scoped operation records
+- [x] Collections and nested folders with empty-only deletion
+- [x] Request definitions with immutable versions, ordered duplicate entries,
+  auth references, body kinds, tags, and execution scope
+- [x] Draft default, optimistic concurrency, archive behavior
+- [x] Request search/filters and version history
+- [x] Catalog UI: specs/import, operations, collections, request list/detail
+- [x] 10 PostgreSQL-backed catalog integration tests
+- Evidence: `docs/phase-6-catalog.md`,
+  `apps/server/tests/catalog.integration.test.ts`.
+
 ## Explicitly not started
 
-Request collections/editor, OpenAPI parsing/import, environments/secrets,
-production MCP endpoint/tools, Go runner enrollment/protocol/execution, live
-GitLab webhooks/reconciliation, deployment evidence, hardening, pilot. OAuth
-AS/MCP token endpoints remain Phase 9 work; live GitLab remains Phase 15.
+Full request editor, environments/secrets, production MCP endpoint/tools, Go
+runner enrollment/protocol/execution, live GitLab webhooks/reconciliation,
+spec diffing, deployment evidence, hardening, pilot. OAuth AS/MCP token
+endpoints remain Phase 9 work; live GitLab remains Phase 15.
 
 ## Next gate
 
-Phase 6 — API specifications, collections, request definitions, immutable
-versioning, and the request/catalog backend.
+Phase 7 — request editor and core API Hub UX, building on the Phase 6 catalog
+backend.

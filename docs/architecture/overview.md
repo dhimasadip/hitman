@@ -75,6 +75,23 @@ Future domain modules (`identity-access`, `projects`, `api-requests`,
   webhooks, and reconciliation are Phase 15.
 - OpenAPI file paths are stored but not parsed until Phase 6.
 
+## API catalog (Phase 6)
+
+- Multiple logical OpenAPI specifications can exist per project; each has
+  immutable versions and a current pointer.
+- 3.0.x/3.1.x imports use Redocly; 3.2.x, external refs, and remote URLs are
+  rejected/deferred. Raw documents and validation reports are stored.
+- Parsed operations are version-scoped. Request operation links do not silently
+  move when a new spec version is imported.
+- Collections/folders organize requests; folders are nested and only empty
+  containers can be deleted.
+- Request versions are immutable snapshots of method, path, ordered
+  query/header entries, auth references, body, and options.
+- Manual/API-created requests start as `draft`; source observations/links remain
+  empty until Phase 10/15 workflows populate them.
+- Catalog writes require project_admin/editor (or organization admin); read-only
+  users and viewers cannot mutate definitions.
+
 ## Cross-cutting rules
 
 - **Authorization is server-side** and centralized (Phases 4–5).
@@ -123,15 +140,15 @@ provider is mocked and labeled in the UI; live integration is Phase 15.
 6. Server persists the result, audit event, and terminal state; UI/MCP reads it.
 7. Lost lease/result becomes `outcome_unknown`; no blind retry.
 
-## Known Phase 3–5 gaps (intentional)
+## Known Phase 3–6 gaps (intentional)
 
-- No request collections, request editor, environments, or execution tables/APIs
-  yet (Phases 6–14).
+- No request editor, environments, or execution APIs yet (Phases 7–14).
 - No `/mcp` route in the production server yet (Phase 9; spike is separate).
 - Worker has no job loops yet (Phase 13).
 - Staging compose is not deployed (no infrastructure/Docker available).
 - Object storage is an interface only.
 - GitLab is mocked; live API/OAuth, webhooks, and reconciliation are Phase 15.
-- OpenAPI parsing/import is Phase 6.
+- OpenAPI remote URL import and spec diffing are Phase 15.
+- Full request editor and request creation UI are Phase 7.
 - OAuth AS/MCP token endpoints, SAML/OIDC federation, MFA, and self-service
   invitations are not implemented yet.

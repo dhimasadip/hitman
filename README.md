@@ -4,11 +4,12 @@ Hitman is an internal API catalog and execution hub for developers and AI coding
 agents. It combines a Postman-like web workspace, a hosted MCP endpoint, and
 persistent local runners for Windows and WSL2.
 
-**Current status:** Phases 0–5 of `implementation-plan.md` are implemented:
+**Current status:** Phases 0–6 of `implementation-plan.md` are implemented:
 decisions/ADRs, repository and CI foundations, technical validation spikes, the
-local/runtime baseline, identity/organization/RBAC, and project management with
-mock GitLab repository registration. Requests, OpenAPI import, production MCP
-tools, runners, and live GitLab reconciliation start in Phase 6.
+local/runtime baseline, identity/organization/RBAC, projects with mock GitLab,
+and the API catalog with OpenAPI import, operations, collections, and immutable
+request versions. The request editor, environments, production MCP tools,
+runners, and live GitLab reconciliation start in Phase 7.
 
 - Product source of truth: [`Hitman-PRD.md`](Hitman-PRD.md)
 - Delivery plan: [`implementation-plan.md`](implementation-plan.md)
@@ -18,6 +19,7 @@ tools, runners, and live GitLab reconciliation start in Phase 6.
 - Phase 3 runtime: [`docs/phase-3-runtime.md`](docs/phase-3-runtime.md)
 - Phase 4 identity: [`docs/phase-4-identity.md`](docs/phase-4-identity.md)
 - Phase 5 projects: [`docs/phase-5-projects.md`](docs/phase-5-projects.md)
+- Phase 6 catalog: [`docs/phase-6-catalog.md`](docs/phase-6-catalog.md)
 
 ## Quick start
 
@@ -54,11 +56,11 @@ Full guide: [`docs/developer-guide/getting-started.md`](docs/developer-guide/get
 apps/
   server/    Fastify API, auth/org/team services, health, metrics, errors
   worker/    worker health server + scheduling boundary
-  web/       React/Vite auth, projects, members, teams, audit views
+  web/       React/Vite auth, project catalog, members, teams, audit views
 packages/
-  contracts/ shared error/health/identity/project schemas
+  contracts/ shared error/health/identity/project/catalog schemas
   config/    env validation, logging, redaction, secret/storage interfaces
-  database/  Drizzle client, migration runner, identity/project schema
+  database/  Drizzle client, migration runner, identity/project/catalog schema
 database/    checked-in migrations and seeds
 runner-go/   Go runner foundation: version, config, destination policy
 spikes/      MCP, OpenAPI, WSL2 networking, durable-job proofs
@@ -72,6 +74,7 @@ docs/        ADRs, policies, architecture, runbooks, phase evidence
 - Auth: `/api/v1/auth/login|session|logout|switch-organization|change-password`
 - Organizations: `/api/v1/organizations/...` (members, teams, audit, projects)
 - Projects: `/api/v1/projects/...` (members, mocked repository, archive)
+- Catalog: specifications/import, operations, collections, requests/versions
 - Worker: same health/metrics surface on port 8081
 - Web: authenticated workspace at `http://127.0.0.1:5173`
 
@@ -88,6 +91,8 @@ staging ingress blocks external `/metrics`.
   projects. Owner teams are metadata, not an access grant.
 - GitLab repository registration is mocked in Phase 5; live API/OAuth/webhooks
   arrive in Phase 15.
+- OpenAPI 3.0/3.1 imports are validated with Redocly; 3.2 is rejected. Request
+  versions are immutable and manual request creation starts as a draft.
 - MCP uses the official TypeScript SDK v2 over Streamable HTTP; business/job
   state is always in PostgreSQL, never in MCP sessions.
 - Requests are created before commit; creation never implies execution, merge,
@@ -133,5 +138,5 @@ See [`docs/adr/`](docs/adr/) for rationale.
 
 ## Next phase
 
-Phase 6 — OpenAPI specifications, collections, request definitions, and
-immutable versioning. Live GitLab and request execution remain later phases.
+Phase 7 — request editor and core API Hub UX. Execution and live GitLab remain
+later phases.

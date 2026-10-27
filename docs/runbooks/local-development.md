@@ -50,7 +50,9 @@ Organization admins create projects from the UI. Project access is explicit;
 organization admins can manage every project. The Source tab uses the Phase 5
 mock GitLab catalog (`acme/app-a`, `acme/app-b`, `platform/shared-api`). Linking
 a repository stores metadata only in development; it does not call GitLab or
-store a token. OpenAPI paths are stored but not parsed until Phase 6.
+store a token. OpenAPI 3.0/3.1 files can now be imported from disk or the mock repository path;
+3.2 is rejected. Raw documents and parsed operations are stored in PostgreSQL.
+Full request editing arrives in Phase 7.
 
 ## Recover from a bad local database
 

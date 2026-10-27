@@ -21,6 +21,9 @@ import {
 import type { Database } from "@hitman/database";
 import Fastify, { type FastifyInstance, type FastifyRequest } from "fastify";
 import { Counter, collectDefaultMetrics, Histogram, Registry } from "prom-client";
+import { registerCollectionRoutes } from "./modules/catalog/collection-routes.js";
+import { registerRequestRoutes } from "./modules/catalog/request-routes.js";
+import { registerSpecificationRoutes } from "./modules/catalog/spec-routes.js";
 import { registerAuthRoutes } from "./modules/identity/auth-routes.js";
 import { createIdentityServices } from "./modules/identity/services.js";
 import { registerOrganizationRoutes } from "./modules/organizations/organization-routes.js";
@@ -163,6 +166,12 @@ export async function buildApp(deps: AppDependencies) {
     organizations: identity.organizations,
   });
   await registerProjectRoutes(routeApp, { config, projects: identity.projects });
+  await registerSpecificationRoutes(routeApp, {
+    config,
+    specifications: identity.specifications,
+  });
+  await registerCollectionRoutes(routeApp, { config, collections: identity.collections });
+  await registerRequestRoutes(routeApp, { config, requests: identity.requests });
 
   const metrics = createMetrics("hitman-server", deps.metadata.version);
   const metricsEnabled =
